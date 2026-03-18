@@ -1,26 +1,51 @@
 """
-Author: <YOUR REAL FIRST AND LAST NAME>
+Author:Jui Hsin Wong
 Assignment: #2
 Description: Port Scanner — A tool that scans a target machine for open network ports
 """
 
 # TODO: Import the required modules (Step ii)
 # socket, threading, sqlite3, os, platform, datetime
+import socket
+import threading
+import sqlite3
+import os
+import platform
+import datetime
 
 
 # TODO: Print Python version and OS name (Step iii)
+print(f"Python version: {platform.python_version()}")
+print(f"Operating System: {os.name}")
 
 
 # TODO: Create the common_ports dictionary (Step iv)
-# Add a 1-line comment above it explaining what it stores
-
+# Dictionary mapping common port num to their service name
+common_ports = {21:"FTP",22: "SSH",23: "Telnet",25: "SMTP",53: "DNS",80: "HTTP",110: "POP3",
+                143: "IMAP",443: "HTTPS",3306: "MySQL",3389: "RDP",8080: "HTTP-Alt"}
 
 # TODO: Create the NetworkTool parent class (Step v)
 # - Constructor: takes target, stores as private self.__target
 # - @property getter for target
 # - @target.setter with empty string validation
 # - Destructor: prints "NetworkTool instance destroyed"
+class NetworkTool:
+    def __init__(self,target):
+        self.__target = target
+    
+    @property
+    def target(self):
+        return self.__target
+    
+    @target.setter
+    def target(self,value):
+        if value == "":
+            print("Error: Target cannot be empty")
+        else:
+            self.__target = value
 
+    def __del__(self):
+        print("NetworkTool instance destroyed")
 
 # Q3: What is the benefit of using @property and @target.setter?
 # TODO: Your 2-4 sentence answer here... (Part 2, Q3)
