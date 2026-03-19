@@ -54,11 +54,22 @@ class NetworkTool:
 # Q1: How does PortScanner reuse code from NetworkTool?
 # TODO: Your 2-4 sentence answer here... (Part 2, Q1)
 
+
 # TODO: Create the PortScanner child class that inherits from NetworkTool (Step vi)
 # - Constructor: call super().__init__(target), initialize self.scan_results = [], self.lock = threading.Lock()
 # - Destructor: print "PortScanner instance destroyed", call super().__del__()
-#
+class PortScanner (NetworkTool):
+    def __init__(self,target):
+        super().__init__(target)
+        self.scan_results=[]
+        self.lock = threading.Lock()
+    
+    def __del__(self):
+        print("PortScanner instance destroyed")
+        super().__del__()
+
 # - scan_port(self, port):
+
 #     Q4: What would happen without try-except here?
 #     TODO: Your 2-4 sentence answer here... (Part 2, Q4)
 #
@@ -69,10 +80,29 @@ class NetworkTool:
 #     - Acquire lock, append (port, status, service_name) tuple, release lock
 #     - Close socket in finally block
 #     - Catch socket.error, print error message
-#
+def scan_port(self, port):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(1)
+            result = sock.connect_ex((self.target, port))
+            if result == 0 :
+                status = "Open"
+            else:
+                status = "Closed"
+            service_name = common_ports.get(port, "Unknown")
+            self.lock.acquire()
+            self.scan_results.append((port, status, service_name))
+            self.lock.release()
+        except socket.error as e:
+            print(f"Error scanning port {port}: {e}")
+        finally:
+            sock.close()
+
 # - get_open_ports(self):
 #     - Use list comprehension to return only "Open" results
-#
+def get_open_ports(self):
+    return[result for result in self.scan_results if result[1] == "Open"]
+
 #     Q2: Why do we use threading instead of scanning one port at a time?
 #     TODO: Your 2-4 sentence answer here... (Part 2, Q2)
 #
@@ -81,7 +111,16 @@ class NetworkTool:
 #     - Create Thread for each port targeting scan_port
 #     - Start all threads (one loop)
 #     - Join all threads (separate loop)
+def scan_range(self, start_port, end_port):
+    threads = []
+    for port in range(start_port, end_port+1):
+        t = threading.Thread(target=self.scan_port, args=(port,))
+        threads.append(t)
 
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
 
 # TODO: Create save_results(target, results) function (Step vii)
 # - Connect to scan_history.db
@@ -89,6 +128,25 @@ class NetworkTool:
 # - INSERT each result with datetime.datetime.now()
 # - Commit, close
 # - Wrap in try-except for sqlite3.Error
+def save_results(target, results):
+    try:
+        conn = sqlite3.connect("scan_history.db")
+        cursor = conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS scans(
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   target TEXT,
+                   port INTEGER,
+                   status TEXT,
+                   service TEXT,
+                   scan_date TEXT
+                   )""")
+        for result in results:
+            cursor.execute("INSERT INTO scans (target, port, status, service, scan_date) VALUES (?,?,?,?,?)",
+                    (target, result[0], result[1], result[2], str(datetime.datetime.now())))
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"Error is {e}")
 
 
 # TODO: Create load_past_scans() function (Step viii)
