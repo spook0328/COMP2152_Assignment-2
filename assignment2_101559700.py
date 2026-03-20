@@ -15,7 +15,6 @@ import datetime
 
 
 # TODO: Print Python version and OS name (Step iii)
-
 print(f"Python version: {platform.python_version()}")
 print(f"Operating System: {os.name}")
 
