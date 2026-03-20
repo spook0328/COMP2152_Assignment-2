@@ -15,6 +15,7 @@ import datetime
 
 
 # TODO: Print Python version and OS name (Step iii)
+
 print(f"Python version: {platform.python_version()}")
 print(f"Operating System: {os.name}")
 
@@ -33,10 +34,10 @@ class NetworkTool:
     def __init__(self,target):
         self.__target = target
     
-# Q3: What is the benefit of using @property and @target.setter?
-# TODO: Your 2-4 sentence answer here... (Part 2, Q3)
-#The benefit of using @porperty lets you read an attribute like a normal variable, but secretly runs a method behind the scenes
-#The benefit of using @target.setter, you can validate the value before saving it.
+    # Q3: What is the benefit of using @property and @target.setter?
+    # The benefit of using @porperty lets you read an attribute like a normal variable, 
+    # but secretly runs a method behind the scenes.
+    # The benefit of using @target.setter, you can validate the value before saving it.
 
     @property
     def target(self):
@@ -55,9 +56,8 @@ class NetworkTool:
 
 
 # Q1: How does PortScanner reuse code from NetworkTool?
-# TODO: Your 2-4 sentence answer here... (Part 2, Q1)
-# PortScanner inherits from NetworkTool by defining it as class PortScanner(NetworkTool), This mean all methods and attributes from 
-#NetworkTool are automatically available in PortScanner.
+# PortScanner inherits from NetworkTool by defining it as class PortScanner(NetworkTool), 
+# This mean all methods and attributes from NetworkTool are automatically available in PortScanner.
 
 # TODO: Create the PortScanner child class that inherits from NetworkTool (Step vi)
 # - Constructor: call super().__init__(target), initialize self.scan_results = [], self.lock = threading.Lock()
@@ -82,7 +82,6 @@ class PortScanner (NetworkTool):
 #     - Catch socket.error, print error message
     def scan_port(self, port):
 #     Q4: What would happen without try-except here?
-#     TODO: Your 2-4 sentence answer here... (Part 2, Q4)
 #     Without using try-except, if an error occurs Python will throw an unhandlled exception and crash the program.
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -107,7 +106,6 @@ class PortScanner (NetworkTool):
         return[result for result in self.scan_results if result[1] == "Open"]
 
 #     Q2: Why do we use threading instead of scanning one port at a time?
-#     TODO: Your 2-4 sentence answer here... (Part 2, Q2)
 #     Scanning one port at a time means the program must wait for each connection responce before moving on which is very slow.
 #     With threading, multiple ports are scanned at the same time, so they don't block each other. 
 #
@@ -196,14 +194,23 @@ if __name__ == "__main__":
             print("End port must be >= start port.")
         else:
             scanner = PortScanner(target)
+                # TODO: After valid input (Step x)
+    # - Create PortScanner object
+    # - Print "Scanning {target} from port {start} to {end}..."
+    # - Call scan_range()
+    # - Call get_open_ports() and print results
+    # - Print total open ports found
+    # - Call save_results()
+    # - Ask "Would you like to see past scan history? (yes/no): "
+    # - If "yes", call load_past_scans()
             print (f"Scanning {target} from port {start_port} to {end_port}...")
             scanner.scan_range(start_port,end_port)
             open_port = scanner.get_open_ports()
             print(f"--- Scan Results for {target} ---")
             for result in open_port:
                 print (f"Port {result[0]}: {result[1]} ({result[2]})")
-            print ("-------------------")
-            print (f"Total open ports found {len(open_port)}")
+            print ("------")
+            print (f"Total open ports found: {len(open_port)}")
             save_results(target, open_port)
             answer = input("Would you like to see past scan history? (yes/no)")
             if answer == "yes" or answer == "YES":
@@ -213,16 +220,9 @@ if __name__ == "__main__":
     except ValueError:
         print("Invalid input. Please enter a valid integer.")
     
-    # TODO: After valid input (Step x)
-    # - Create PortScanner object
-    # - Print "Scanning {target} from port {start} to {end}..."
-    # - Call scan_range()
-    # - Call get_open_ports() and print results
-    # - Print total open ports found
-    # - Call save_results()
-    # - Ask "Would you like to see past scan history? (yes/no): "
-    # - If "yes", call load_past_scans()
-    
 # Q5: New Feature Proposal
-# TODO: Your 2-3 sentence description here... (Part 2, Q5)
-# Diagram: See diagram_studentID.png in the repository root
+# I googled the most common port Scanner and I found the Port Risk Level feature is an impotant and useful one.
+# Categorize each open port as High, Medium or Low Risk based on the service running on it.
+# For example, FTP and Telnet would be "High Risk" because they transmit data without encryption, while HTTPS would be "Low Risk".
+# This feature would use a list comprehension to filter and label open ports
+# Diagram: See diagram_101559700.png in the repository root

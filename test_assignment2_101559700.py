@@ -47,8 +47,7 @@ class TestPortScanner(unittest.TestCase):
         # TODO: Assert scanner.target is still "127.0.0.1"
         self.assertEqual(scanner.target, "127.0.0.1")
         
-
-
+        
 if __name__ == "__main__":
     unittest.main()
 #change
